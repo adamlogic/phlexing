@@ -6,7 +6,7 @@ require "phlexing"
 require "maxitest/autorun"
 
 def assert_phlex(expected, source, **options, &block)
-  @converter = Phlexing::Converter.new(source, **options)
+  @converter = Phlexing::Converter.new(source, raise_errors: true, **options)
 
   assert_details(expected, source, @converter.component_code, &block)
 
@@ -17,7 +17,7 @@ def assert_phlex(expected, source, **options, &block)
 end
 
 def assert_phlex_template(expected, source, **options, &block)
-  @converter = Phlexing::Converter.new(source, **options)
+  @converter = Phlexing::Converter.new(source, raise_errors: true, **options)
 
   assert_details(expected, source, @converter.template_code, &block)
 end

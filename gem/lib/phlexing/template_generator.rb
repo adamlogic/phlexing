@@ -25,7 +25,9 @@ module Phlexing
       handle_node(document)
 
       Formatter.call(out.string.strip)
-    rescue StandardError
+    rescue StandardError => e
+      raise e if options.raise_errors?
+
       out.string.strip
     end
 
