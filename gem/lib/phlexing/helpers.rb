@@ -6,10 +6,10 @@ require "phlex-rails"
 module Phlexing
   module Helpers
     KNOWN_ELEMENTS =
-      Phlex::HTML::VoidElements.registered_elements.values +
-      Phlex::HTML::StandardElements.registered_elements.values
+      Phlex::HTML::VoidElements.instance_methods.map(&:to_s) +
+      Phlex::HTML::StandardElements.instance_methods.map(&:to_s)
 
-    SVG_ELEMENTS = Phlex::SVG::StandardElements.registered_elements.values.to_h { |element| [element.downcase, element] }
+    SVG_ELEMENTS = Phlex::SVG::StandardElements.instance_methods.to_h { |element| [element.downcase, element] }
 
     def whitespace
       options.whitespace? ? "whitespace\n" : ""
@@ -109,7 +109,7 @@ module Phlexing
     def known_rails_helpers
       Phlex::Rails::Helpers
         .constants
-        .reject { |m| m == :Routes }
+        .reject { |m| m.in? [:Routes, :REDIRECTS] }
         .map { |m| Module.const_get("::Phlex::Rails::Helpers::#{m}") }
         .each_with_object({}) { |m, sum|
           (m.instance_methods - Module.instance_methods).each do |method|

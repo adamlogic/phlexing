@@ -306,7 +306,7 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
     PHLEX
 
     assert_phlex_template expected, html do
-      assert_analyzer_includes "Phlex::Rails::Helpers::T"
+      assert_analyzer_includes "Phlex::Rails::Helpers::Translate"
     end
   end
 
@@ -403,7 +403,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       class Component < Phlex::HTML
-        include Phlex::Rails::Helpers::T
         include Phlex::Rails::Helpers::Translate
 
         def view_template
@@ -415,7 +414,7 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
     PHLEX
 
     assert_phlex expected, html do
-      assert_analyzer_includes "Phlex::Rails::Helpers::Translate", "Phlex::Rails::Helpers::T"
+      assert_analyzer_includes "Phlex::Rails::Helpers::Translate"
     end
   end
 end
