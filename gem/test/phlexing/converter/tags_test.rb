@@ -143,6 +143,58 @@ class Phlexing::Converter::TagsTest < Minitest::Spec
     assert_phlex_template expected, html
   end
 
+  it "top-level sibling tags are separated by a blank line" do
+    html = <<~HTML.strip
+      <div></div>
+      <div></div>
+    HTML
+
+    expected = <<~PHLEX.strip
+      div
+
+      div
+    PHLEX
+
+    assert_phlex_template expected, html
+  end
+
+  it "children tags are not separated by a blank line" do
+    html = <<~HTML.strip
+      <section>
+        <div></div>
+        <p></p>
+      </section>
+    HTML
+
+    expected = <<~PHLEX.strip
+      section do
+        div
+        p
+      end
+    PHLEX
+
+    assert_phlex_template expected, html
+  end
+
+  it "children tags are separated by a blank line via `blank_line_between_children` option" do
+    html = <<~HTML.strip
+      <section>
+        <div></div>
+        <p></p>
+      </section>
+    HTML
+
+    expected = <<~PHLEX.strip
+      section do
+        div
+
+        p
+      end
+    PHLEX
+
+    assert_phlex_template expected, html, blank_line_between_children: true
+  end
+
   it "standlone head and body tag" do
     html = <<~HTML.strip
       <head></head>

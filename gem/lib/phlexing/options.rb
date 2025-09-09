@@ -2,11 +2,12 @@
 
 module Phlexing
   class Options
-    attr_accessor :component, :component_name, :parent_component, :whitespace, :svg_param, :template_name, :raise_errors, :max_line_length
+    attr_accessor :component, :component_name, :parent_component, :whitespace, :svg_param, :template_name, :raise_errors, :max_line_length, :blank_line_between_children
 
     alias_method :whitespace?, :whitespace
     alias_method :component?, :component
     alias_method :raise_errors?, :raise_errors
+    alias_method :blank_line_between_children?, :blank_line_between_children
 
     def initialize(
       component: false,
@@ -16,7 +17,8 @@ module Phlexing
       svg_param: "s",
       template_name: "view_template",
       raise_errors: false,
-      max_line_length: 80)
+      max_line_length: 80,
+      blank_line_between_children: false)
       @component = component
       @component_name = safe_constant_name(component_name)
       @parent_component = safe_constant_name(parent_component)
@@ -25,6 +27,7 @@ module Phlexing
       @template_name = template_name
       @raise_errors = raise_errors
       @max_line_length = max_line_length
+      @blank_line_between_children = blank_line_between_children
     end
 
     def safe_constant_name(name)

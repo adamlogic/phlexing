@@ -190,7 +190,7 @@ module Phlexing
         handle_html_element_node(node, level)
       end
 
-      out << newline if level == 1
+      out << newline if level == 1 || options.blank_line_between_children?
     end
 
     def handle_svg_node(node, level)
