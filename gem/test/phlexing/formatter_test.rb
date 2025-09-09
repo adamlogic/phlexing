@@ -21,5 +21,18 @@ module Phlexing
       assert_equal expected, Formatter.call(input, max: 25)
       assert_equal input, Formatter.call(input, max: 26)
     end
+
+    it "should respect max_line_length option" do
+      input = "call(rather_long_argument)"
+
+      expected = <<~RUBY.strip
+        call(
+          rather_long_argument
+        )
+      RUBY
+
+      assert_equal expected, Formatter.call(input, options: Options.new(max_line_length: 25))
+      assert_equal input, Formatter.call(input, options: Options.new(max_line_length: 26))
+    end
   end
 end

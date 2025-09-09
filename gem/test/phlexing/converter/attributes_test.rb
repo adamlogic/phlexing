@@ -86,7 +86,8 @@ class Phlexing::Converter::AttributesTest < Minitest::Spec
       input(type: %(checkbox), **(" selected": true))
     PHLEX
 
-    assert_phlex_template expected, html
+    # This test relies on Formatter's exception fallback behavior
+    assert_phlex_template expected, html, raise_errors: false
   end
 
   xit "should interpolate ERB in tag with interpoltion" do
