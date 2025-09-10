@@ -12,7 +12,7 @@ module Phlexing
 
     def initialize(converter)
       @converter = converter
-      @analyzer = RubyAnalyzer.new
+      @analyzer = RubyAnalyzer.new(options: options)
       @analyzer.analyze(converter.source)
     end
 

@@ -113,7 +113,8 @@ class Phlexing::Converter::AttributesTest < Minitest::Spec
       div(style: %(background: \#\{blue? ? "blue" : "red"\}))
     PHLEX
 
-    assert_phlex_template expected, html
+    # Relies on RubyAnalyzer's exception fallback behavior
+    assert_phlex_template expected, html, raise_errors: false
   end
 
   it "ERB attribute interpolation with one dynamic string and one static string" do
@@ -123,7 +124,8 @@ class Phlexing::Converter::AttributesTest < Minitest::Spec
       div(style: %(\#\{"background: blue"\}; display: none;))
     PHLEX
 
-    assert_phlex_template expected, html
+    # Relies on RubyAnalyzer's exception fallback behavior
+    assert_phlex_template expected, html, raise_errors: false
   end
 
   xit "multiple ERB attribute string interpolations in one attribute" do

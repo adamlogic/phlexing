@@ -4,13 +4,14 @@ require "syntax_tree"
 
 module Phlexing
   class RubyAnalyzer
-    attr_accessor :ivars, :locals, :idents, :calls, :consts, :instance_methods, :includes
+    attr_accessor :ivars, :locals, :idents, :calls, :consts, :instance_methods, :includes, :options
 
     def self.call(source)
       new.analyze(source)
     end
 
-    def initialize
+    def initialize(options: Options.new)
+      @options = options
       @ivars = Set.new
       @locals = Set.new
       @idents = Set.new
@@ -32,7 +33,9 @@ module Phlexing
       @visitor.visit(program)
 
       self
-    rescue SyntaxTree::Parser::ParseError, NoMethodError
+    rescue SyntaxTree::Parser::ParseError, NoMethodError => e
+      raise e if options.raise_errors?
+
       self
     end
 
@@ -46,7 +49,9 @@ module Phlexing
       lines << ruby_lines_from_erb_attributes(document)
 
       lines.join("\n")
-    rescue StandardError
+    rescue StandardError => e
+      raise e if options.raise_errors?
+
       ""
     end
 
