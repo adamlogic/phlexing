@@ -33,7 +33,7 @@ def assert_details(expected, source, generated_code, &block)
 end
 
 def assert_analyzed(source, all: true, &block)
-  @analyzer = Phlexing::RubyAnalyzer.new(options: @converter.options)
+  @analyzer = Phlexing::RubyAnalyzer.new(options: @converter&.options || Phlexing::Options.new)
   @analyzer.analyze(source)
 
   @assert_ivars_called = false
