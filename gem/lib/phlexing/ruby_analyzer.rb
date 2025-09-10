@@ -29,7 +29,7 @@ module Phlexing
     end
 
     def analyze_ruby(code)
-      options.debug("BEFORE SyntaxTree.parse", code)
+      options.debug("BEFORE SyntaxTree.parse") { code }
 
       program = SyntaxTree.parse(code)
       @visitor.visit(program)
@@ -45,7 +45,7 @@ module Phlexing
 
     def extract_ruby_from_erb(source)
       document = Parser.call(source, options: options)
-      options.debug("AFTER Parser", document)
+      options.debug("AFTER Parser") { document }
 
       lines = []
 

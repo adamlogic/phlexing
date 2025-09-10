@@ -46,10 +46,10 @@ module Phlexing
       @debug
     end
 
-    def debug(label, message)
+    def debug(label, message = nil)
       if debug?
         puts "#{label} (#{caller[0]})"
-        puts message
+        puts message || yield
         puts
       end
     end
