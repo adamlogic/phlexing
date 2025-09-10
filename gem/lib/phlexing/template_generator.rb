@@ -21,8 +21,13 @@ module Phlexing
     end
 
     def call(source)
-      document = Parser.call(source)
+      options.debug("BEFORE Parser", source)
+
+      document = Parser.call(source, options: options)
+      options.debug("AFTER Parser", document.to_s)
       handle_node(document)
+
+      options.debug("BEFORE Formatter", out.string.strip)
 
       Formatter.call(out.string.strip, options: options)
     rescue StandardError => e

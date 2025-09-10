@@ -4,9 +4,11 @@ require "nokogiri"
 
 module Phlexing
   class Parser
-    def self.call(source)
+    def self.call(source, options: Options.new)
       source = ERBTransformer.call(source)
+      options.debug("AFTER ERBTransformer", source)
       source = Minifier.call(source)
+      options.debug("AFTER Minifier", source)
 
       # Credit:
       # https://github.com/spree/deface/blob/6bf18df76715ee3eb3d0cd1b6eda822817ace91c/lib/deface/parser.rb#L105-L111

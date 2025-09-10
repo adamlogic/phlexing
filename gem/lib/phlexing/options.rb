@@ -18,7 +18,8 @@ module Phlexing
       template_name: "view_template",
       raise_errors: false,
       max_line_length: 80,
-      blank_line_between_children: false)
+      blank_line_between_children: false,
+      debug: false)
       @component = component
       @component_name = safe_constant_name(component_name)
       @parent_component = safe_constant_name(parent_component)
@@ -28,6 +29,7 @@ module Phlexing
       @raise_errors = raise_errors
       @max_line_length = max_line_length
       @blank_line_between_children = blank_line_between_children
+      @debug = debug
     end
 
     def safe_constant_name(name)
@@ -37,6 +39,18 @@ module Phlexing
         "A#{name}"
       else
         name
+      end
+    end
+
+    def debug?
+      @debug
+    end
+
+    def debug(label, message)
+      if debug?
+        puts "#{label} (#{caller[0]})"
+        puts message
+        puts
       end
     end
   end
