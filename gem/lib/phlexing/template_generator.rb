@@ -229,7 +229,7 @@ module Phlexing
         else
           handle_element_node(node, level)
         end
-      in Nokogiri::HTML4::Document | Nokogiri::HTML4::DocumentFragment | Nokogiri::XML::DTD
+      in Nokogiri::HTML4::Document | Nokogiri::HTML4::DocumentFragment | Nokogiri::HTML5::DocumentFragment | Nokogiri::XML::DTD
         handle_document_node(node, level)
       in Nokogiri::XML::Comment
         handle_html_comment_node(node)

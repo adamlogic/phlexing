@@ -24,7 +24,15 @@ module Phlexing
     end
 
     def arg(string)
-      "#{string}: "
+      if string.count(".@:") > 0
+        %(#{double_quotes(string)}: )
+      else
+        "#{string}: "
+      end
+    end
+
+    def double_quotes(string)
+      %("#{string}")
     end
 
     def quote(string)
