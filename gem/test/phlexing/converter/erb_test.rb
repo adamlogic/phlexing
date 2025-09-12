@@ -230,6 +230,23 @@ class Phlexing::Converter::ErbTest < Minitest::Spec
     end
   end
 
+  it "ERB yield" do
+    html = <<~HTML.strip
+      <div><%= yield %></div>
+      <p><%= foo.yield %></p>
+    HTML
+
+    expected = <<~PHLEX.strip
+      div { yield }
+
+      p { foo.yield }
+    PHLEX
+
+    assert_phlex_template expected, html do
+      assert_locals "foo"
+    end
+  end
+
   # rubocop:disable Lint/LiteralInInterpolation
   it "tag with text next to string erb output" do
     html = %(<div>Text<%= "ERB Text" %><%= "#{'interpolate'} text" %></div>)

@@ -17,7 +17,10 @@ module Phlexing
     end
 
     def call
-      SyntaxTree.format(@source, @max).strip
+      # Avoid "invalid yield" exception from SyntaxTree
+      @source.gsub!(/\b(?<!\.)yield\b/, "__yield__")
+      options.debug("BEFORE SyntaxTree.format") { @source }
+      SyntaxTree.format(@source, @max).gsub(/\b__yield__\b/, "yield").strip
     rescue SyntaxTree::Parser::ParseError, NoMethodError => e
       raise e if options.raise_errors?
 

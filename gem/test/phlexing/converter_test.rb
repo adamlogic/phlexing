@@ -63,6 +63,40 @@ class Phlexing::ConverterTest < Minitest::Spec
     assert_phlex expected, html, component_name: "TestComponent", parent_component: "ApplicationView"
   end
 
+  it "should generate phlex class with yield" do
+    html = %(<h1><%= yield %></h1>)
+
+    expected = <<~PHLEX.strip
+      class Component < Phlex::HTML
+        def view_template
+          h1 { yield }
+        end
+      end
+    PHLEX
+
+    assert_phlex expected, html
+
+    html = %(<h1><%= yield if foo? %></h1>)
+
+    expected = <<~PHLEX.strip
+      class Component < Phlex::HTML
+        def view_template
+          h1 { yield if foo? }
+        end
+
+        private
+
+        def foo?(*args, **kwargs)
+          # TODO: Implement me
+        end
+      end
+    PHLEX
+
+    assert_phlex expected, html do
+      assert_instance_methods "foo?"
+    end
+  end
+
   it "should generate phlex class with ivars" do
     html = %(<h1><%= @firstname %> <%= @lastname %></h1>)
 

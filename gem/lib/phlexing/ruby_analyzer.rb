@@ -29,6 +29,8 @@ module Phlexing
     end
 
     def analyze_ruby(code)
+      # Avoid "invalid yield" exception from SyntaxTree
+      code.gsub!(/\b(?<!\.)yield\b/, "nil")
       options.debug("BEFORE SyntaxTree.parse") { code }
 
       program = SyntaxTree.parse(code)
