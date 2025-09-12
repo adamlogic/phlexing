@@ -25,6 +25,7 @@ module Phlexing
 
       document = Parser.call(source, options: options)
       options.debug("AFTER Parser") { document.inspect }
+      options.debug("Parser errors:") { document.errors }
       handle_node(document)
 
       options.debug("BEFORE Formatter") { out.string.strip }

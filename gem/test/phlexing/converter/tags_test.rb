@@ -290,11 +290,11 @@ class Phlexing::Converter::TagsTest < Minitest::Spec
 
   it "standlone tr tag" do
     html = <<~HTML.strip
-      <tr><td>cell</td></tr>
+      <tr><td>contents</td></tr>
     HTML
 
     expected = <<~PHLEX.strip
-      tr { td { "cell" } }
+      tr { td { "contents" } }
     PHLEX
 
     assert_phlex_template expected, html
