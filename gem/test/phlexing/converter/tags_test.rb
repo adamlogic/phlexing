@@ -287,4 +287,16 @@ class Phlexing::Converter::TagsTest < Minitest::Spec
 
     assert_phlex_template expected, html
   end
+
+  it "standlone tr tag" do
+    html = <<~HTML.strip
+      <tr><td>cell</td></tr>
+    HTML
+
+    expected = <<~PHLEX.strip
+      tr { td { "cell" } }
+    PHLEX
+
+    assert_phlex_template expected, html
+  end
 end
