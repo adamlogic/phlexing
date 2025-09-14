@@ -68,7 +68,7 @@ module Phlexing
       return if element.nil?
       return if element.is_a?(Nokogiri::XML::Text)
 
-      return if ["div", "span", "p", "erb"].include?(element.name)
+      return if ["div", "span", "p", "erb", "comment"].include?(element.name)
 
       element.name
     end

@@ -11,7 +11,6 @@ class Phlexing::ConverterTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       render SomeView.new
-
       plain "Hello"
     PHLEX
 
@@ -239,7 +238,6 @@ class Phlexing::ConverterTest < Minitest::Spec
         def view_template
           if should_show?
             plain pretty_print(@user)
-
             plain another_helper(1)
           end
         end

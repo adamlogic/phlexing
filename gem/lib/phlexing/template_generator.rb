@@ -24,8 +24,7 @@ module Phlexing
       options.debug("BEFORE Parser") { source }
 
       document = Parser.call(source, options: options)
-      options.debug("AFTER Parser") { document.inspect }
-      options.debug("Parser errors:") { document.errors }
+      options.debug("AFTER Parser") { [document.inspect, document.errors].reject(&:blank?).join("\n\n") }
       handle_node(document)
 
       options.debug("BEFORE Formatter") { out.string.strip }
@@ -41,6 +40,16 @@ module Phlexing
       output("plain", text)
     end
 
+    def handle_erb_comment_node(node, content)
+      kind, erb_content = Parser.decode_erb_comment(content)
+
+      if kind == "loud"
+        handle_loud_erb_node(node, erb_content)
+      else
+        handle_silent_erb_node(node, erb_content)
+      end
+    end
+
     def handle_html_comment_output(text)
       output("comment", braces(quote(text)))
     end
@@ -54,7 +63,7 @@ module Phlexing
     end
 
     def handle_output(text)
-      output("", unescape(text).strip)
+      output("", unescape(text))
     end
 
     def handle_attributes(node)
@@ -100,18 +109,21 @@ module Phlexing
           value = unwrap_erb(attribute.value)
           value.include?(" ") ? parens(value) : value
         else
-          transformed = Parser.call(attribute.value)
+          transformed = Parser.call(attribute.value, options: options)
           attribute = StringIO.new
 
           transformed.children.each do |node|
             case node
             when Nokogiri::XML::Text
               attribute << node.text
-            when Nokogiri::XML::Node
-              if node.attributes["loud"]
-                attribute << interpolate(node.text.strip)
+            when Nokogiri::XML::Comment
+              kind, code = Parser.decode_erb_comment(node.text)
+              code.strip!
+
+              if kind == "loud"
+                attribute << interpolate(code)
               else
-                attribute << interpolate("#{node.text.strip} && nil")
+                attribute << interpolate("#{code} && nil")
               end
             end
           end
@@ -125,19 +137,22 @@ module Phlexing
       "**#{parens("#{unwrap_erb(unescape(attribute.value))}: true")}"
     end
 
-    def handle_erb_safe_node(node)
-      if siblings?(node) && string_output?(node)
-        handle_text_output(node.text.strip)
+    def handle_erb_safe_node(node, erb_content = nil)
+      erb_content ||= node.text
+
+      if siblings?(node) && string_output?(erb_content)
+        handle_text_output(erb_content.strip)
       else
-        handle_output(node.text.strip)
+        handle_output(erb_content.strip)
       end
     end
 
     def handle_text_node(node)
       text = node.text
 
+
       if text.squish.empty? && text.length.positive?
-        out << whitespace
+        out << whitespace unless %w[table thead tbody tfoot tr].include?(node.parent&.name)
 
         text.strip!
       end
@@ -164,38 +179,39 @@ module Phlexing
       out << newline
     end
 
-    def handle_loud_erb_node(node)
-      if node.text.start_with?("=")
-        handle_erb_unsafe_output(node.text.from(1).strip)
+    def handle_loud_erb_node(node, erb_content = nil)
+      erb_content ||= node.text
+
+      if erb_content.start_with?("=")
+        handle_erb_unsafe_output(erb_content.from(1).strip)
       else
-        handle_erb_safe_node(node)
+        handle_erb_safe_node(node, erb_content)
       end
     end
 
-    def handle_silent_erb_node(node)
-      if node.text.start_with?("#")
-        handle_erb_comment_output(node.text.from(1).strip)
-      elsif node.text.start_with?("-")
-        handle_output(node.text.from(1).to(-2).strip)
+    def handle_silent_erb_node(node, erb_content = nil)
+      erb_content ||= node.text
+
+      if erb_content.start_with?("#")
+        handle_erb_comment_output(erb_content.from(1).strip)
       else
-        handle_output(node.text.strip)
+        out << newline
+        handle_output(erb_content)
       end
     end
 
     def handle_html_comment_node(node)
-      handle_html_comment_output(node.text.strip)
+      comment = node.text.strip
+
+      if comment.start_with?("PHLEXING:ERB:")
+        handle_erb_comment_node(node, comment)
+      else
+        handle_html_comment_output(comment)
+      end
     end
 
     def handle_element_node(node, level)
-      case node
-      in name: "erb", attributes: [{ name: "loud", value: "" }]
-        handle_loud_erb_node(node)
-      in name: "erb", attributes: [{ name: "silent", value: "" }]
-        handle_silent_erb_node(node)
-      else
-        handle_html_element_node(node, level)
-      end
-
+      handle_html_element_node(node, level)
       out << newline if level == 1 || options.blank_line_between_children?
     end
 

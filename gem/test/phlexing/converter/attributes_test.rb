@@ -114,7 +114,9 @@ class Phlexing::Converter::AttributesTest < Minitest::Spec
     PHLEX
 
     # Relies on RubyAnalyzer's exception fallback behavior
-    assert_phlex_template expected, html, raise_errors: false
+    assert_phlex_template expected, html, raise_errors: false do
+      assert_instance_methods "blue?"
+    end
   end
 
   it "ERB attribute interpolation with one dynamic string and one static string" do

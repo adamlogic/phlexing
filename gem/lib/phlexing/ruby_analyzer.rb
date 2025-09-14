@@ -47,7 +47,7 @@ module Phlexing
 
     def extract_ruby_from_erb(source)
       document = Parser.call(source, options: options)
-      options.debug("AFTER Parser") { document }
+      options.debug("AFTER Parser") { [document.inspect, document.errors].reject(&:blank?).join("\n\n") }
 
       lines = []
 
@@ -62,13 +62,16 @@ module Phlexing
     end
 
     def ruby_lines_from_erb_tags(document)
-      nodes = document.css("erb")
-
-      nodes
-        .map { |node| node.text.to_s.strip }
-        .map { |line| line.delete_prefix("=") }
-        .map { |line| line.delete_prefix("-") }
-        .map { |line| line.delete_suffix("-") }
+      # deserialize erb that's been serialized to comments
+      String.new.tap do |result|
+        document.traverse do |node|
+          if node.comment?
+            _, erb_code = Parser.decode_erb_comment(node.text.to_s)
+            erb_code.sub!(/^[=]/, "")
+            result << erb_code
+          end
+        end
+      end
     end
 
     def ruby_lines_from_erb_attributes(document)
@@ -81,10 +84,10 @@ module Phlexing
 
         pair.each do |_, value|
           Parser
-            .call(value)
+            .call(value, options: options)
             .children
-            .select { |child| child.is_a?(Nokogiri::XML::Node) }
-            .each   { |child| lines << child.text.strip }
+            .select { |child| child.is_a?(Nokogiri::XML::Node) && child.comment? }
+            .each   { |child| lines << Parser.decode_erb_comment(child.text.strip).last }
         end
       end
 

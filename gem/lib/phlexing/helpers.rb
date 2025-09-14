@@ -97,7 +97,7 @@ module Phlexing
     def output(name, string)
       out << name
       out << " "
-      out << string.strip
+      out << string
       out << newline
     end
 
@@ -126,8 +126,8 @@ module Phlexing
         }
     end
 
-    def string_output?(node)
-      word = node.text.strip.scan(/^\w+/)[0]
+    def string_output?(content)
+      word = content.strip.scan(/^\w+/)[0]
 
       return true if word.nil?
 

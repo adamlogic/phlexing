@@ -288,7 +288,7 @@ class Phlexing::Converter::TagsTest < Minitest::Spec
     assert_phlex_template expected, html
   end
 
-  it "standlone tr tag" do
+  it "table contents without containing table tag" do
     html = <<~HTML.strip
       <tr><td>contents</td></tr>
     HTML
@@ -298,5 +298,28 @@ class Phlexing::Converter::TagsTest < Minitest::Spec
     PHLEX
 
     assert_phlex_template expected, html
+  end
+
+  it "table contents with ERB between rows or cells" do
+    html = <<~HTML.strip
+      <tr>
+        <td>contents</td>
+        <% if show_totals? %>
+          <td>totals</td>
+        <% end %>
+      </tr>
+    HTML
+
+    expected = <<~PHLEX.strip
+      tr do
+        td { "contents" }
+
+        td { "totals" } if show_totals?
+      end
+    PHLEX
+
+    assert_phlex_template expected, html do
+      assert_instance_methods "show_totals?"
+    end
   end
 end

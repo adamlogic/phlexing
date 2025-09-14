@@ -121,7 +121,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       image_tag image_path("/asset")
-
       plain "Text"
     PHLEX
 
@@ -135,7 +134,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       check_box_tag(:pet_dog)
-
       plain "Text"
     PHLEX
 
@@ -149,7 +147,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       text_field(:person, :name)
-
       plain "Text"
     PHLEX
 
@@ -163,7 +160,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       options_for_select([["Lisbon", 1], ["Madrid", 2]])
-
       plain "Text"
     PHLEX
 
@@ -177,7 +173,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       collection_select([])
-
       plain "Text"
     PHLEX
 
@@ -191,7 +186,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       options_from_collection_for_select([])
-
       plain "Text"
     PHLEX
 
@@ -205,7 +199,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       select_date Date.today, prefix: :start_date
-
       plain "Text"
     PHLEX
 
@@ -220,7 +213,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       select_year(2009)
-
       plain "Text"
     PHLEX
 
@@ -234,7 +226,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       link_to "Abc", "/users"
-
       plain "Text"
     PHLEX
 
@@ -248,7 +239,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       url_for post
-
       plain "Text"
     PHLEX
 
@@ -301,7 +291,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       t("hello")
-
       plain "Text"
     PHLEX
 
@@ -315,7 +304,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       translate("hello")
-
       plain "Text"
     PHLEX
 
@@ -329,7 +317,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       radio_button("hello")
-
       plain "Text"
     PHLEX
 
@@ -343,7 +330,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       stylesheet_path "hello"
-
       plain "Text"
     PHLEX
 
@@ -357,7 +343,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       javascript_path "hello"
-
       plain "Text"
     PHLEX
 
@@ -371,7 +356,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       dom_id "hello"
-
       plain "Text"
     PHLEX
 
@@ -407,7 +391,6 @@ class Phlexing::Converter::RailsHelpersTest < Minitest::Spec
 
         def view_template
           translate("hello")
-
           t("hello")
         end
       end
