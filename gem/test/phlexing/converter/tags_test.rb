@@ -319,7 +319,7 @@ class Phlexing::Converter::TagsTest < Minitest::Spec
     PHLEX
 
     assert_phlex_template expected, html do
-      assert_instance_methods "show_totals?"
+      assert_helper_registrations "show_totals?"
     end
   end
 end

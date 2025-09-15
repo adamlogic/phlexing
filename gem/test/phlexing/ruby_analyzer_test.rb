@@ -26,7 +26,7 @@ module Phlexing
       assert_analyzed(input) do
         assert_idents "some"
         assert_calls "some"
-        assert_instance_methods "some"
+        assert_helper_registrations "some"
       end
     end
 
@@ -37,7 +37,7 @@ module Phlexing
         assert_ivars "thing"
         assert_idents "some"
         assert_calls "some"
-        assert_instance_methods "some"
+        assert_helper_registrations "some"
       end
     end
 
@@ -47,7 +47,7 @@ module Phlexing
       assert_analyzed(input) do
         assert_idents "some?"
         assert_calls "some?"
-        assert_instance_methods "some?"
+        assert_helper_registrations "some?"
       end
     end
 
@@ -57,7 +57,7 @@ module Phlexing
       assert_analyzed(input) do
         assert_idents "some?"
         assert_calls "some?"
-        assert_instance_methods "some?"
+        assert_helper_registrations "some?"
       end
     end
 
@@ -68,7 +68,7 @@ module Phlexing
         assert_ivars "thing"
         assert_idents "some?"
         assert_calls "some?"
-        assert_instance_methods "some?"
+        assert_helper_registrations "some?"
       end
     end
 

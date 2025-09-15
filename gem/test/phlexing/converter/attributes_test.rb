@@ -31,7 +31,7 @@ class Phlexing::Converter::AttributesTest < Minitest::Spec
 
     assert_phlex_template expected, html do
       assert_locals "classes_helper"
-      assert_instance_methods "true?"
+      assert_helper_registrations "true?"
     end
   end
 
@@ -73,7 +73,7 @@ class Phlexing::Converter::AttributesTest < Minitest::Spec
     PHLEX
 
     assert_phlex_template expected, html do
-      assert_instance_methods "something?"
+      assert_helper_registrations "something?"
     end
   end
 
@@ -115,7 +115,7 @@ class Phlexing::Converter::AttributesTest < Minitest::Spec
 
     # Relies on RubyAnalyzer's exception fallback behavior
     assert_phlex_template expected, html, raise_errors: false do
-      assert_instance_methods "blue?"
+      assert_helper_registrations "blue?"
     end
   end
 

@@ -9,6 +9,20 @@ module Phlexing
 
     def initialize(analyzer)
       @analyzer = analyzer
+      @node_stack = []
+    end
+
+    def analyze(node, allow_output_helpers: true)
+      @allow_output_helpers = allow_output_helpers
+      visit(node)
+    end
+
+    def visit(node)
+      # track the node stack to determine if the current node is a top-level call
+      @node_stack << node
+      super
+    ensure
+      @node_stack.pop
     end
 
     def visit_ivar(node)
@@ -21,7 +35,7 @@ module Phlexing
 
     def visit_command(node)
       unless rails_helper?(node.message.value)
-        @analyzer.instance_methods << node.message.value
+        @analyzer.output_helpers << node.message.value
       end
       super
     end
@@ -62,7 +76,19 @@ module Phlexing
         when SyntaxTree::Ident
           if node.message.value.end_with?("?") || node.child_nodes[3].is_a?(SyntaxTree::ArgParen)
             unless rails_helper?(node.message.value)
-              @analyzer.instance_methods << node.message.value
+              # If the node is a method call at the top level, we should register it as an output helper.
+              # If the node is an argument to another method or part of a conditional, we should register it as a value helper.
+              # Examples:
+              # some_helper? => output helper
+              # some_helper => output helper
+              # if some_helper? => value helper
+              # some_caller(some_helper) => value helper
+              name = node.message.value
+              if @allow_output_helpers && @node_stack[-2].class.in?([NilClass, SyntaxTree::Program, SyntaxTree::Statements])
+                @analyzer.output_helpers << name
+              else
+                @analyzer.value_helpers << name
+              end
             end
             @analyzer.calls << node.message.value
           else

@@ -44,7 +44,7 @@ class Phlexing::Converter::SvgTest < Minitest::Spec
 
     assert_phlex_template expected, html do
       assert_locals "interpolate"
-      assert_instance_methods "method_call"
+      assert_helper_registrations "method_call"
     end
   end
 

@@ -41,7 +41,7 @@ def assert_analyzed(source, all: true, &block)
   @assert_idents_called = false
   @assert_calls_called = false
   @assert_consts_called = false
-  @assert_instance_methods_called = false
+  @assert_helper_registrations_called = false
   @assert_includes_called = false
 
   block&.call(self)
@@ -49,7 +49,7 @@ def assert_analyzed(source, all: true, &block)
   assert_ivars unless @assert_ivars_called
   assert_locals unless @assert_locals_called
   assert_consts unless @assert_consts_called
-  assert_instance_methods unless @assert_instance_methods_called
+  assert_helper_registrations unless @assert_helper_registrations_called
   assert_analyzer_includes unless @assert_includes_called
 
   if all
@@ -130,15 +130,15 @@ def assert_consts(*consts)
   )
 end
 
-def assert_instance_methods(*instance_methods)
-  raise "Make sure assert_instance_methods is called within the block passed to assert_phlex" if @analyzer.nil?
+def assert_helper_registrations(*helpers)
+  raise "Make sure assert_helper_registrations is called within the block passed to assert_phlex" if @analyzer.nil?
 
-  @assert_instance_methods_called = true
+  @assert_helper_registrations_called = true
 
   assert_equal(
-    instance_methods.sort,
-    @analyzer.instance_methods.to_a.sort,
-    "assert_instance_methods"
+    helpers.sort,
+    (@analyzer.value_helpers.to_a + @analyzer.output_helpers.to_a).sort,
+    "assert_helper_registrations"
   )
 end
 

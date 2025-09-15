@@ -16,7 +16,7 @@ class Phlexing::ConverterTest < Minitest::Spec
 
     assert_phlex_template expected, html do
       assert_consts "SomeView"
-      assert_instance_methods "render"
+      assert_helper_registrations "render"
     end
   end
 
@@ -79,20 +79,16 @@ class Phlexing::ConverterTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       class Component < Phlex::HTML
+        register_value_helper :foo?
+
         def view_template
           h1 { yield if foo? }
-        end
-
-        private
-
-        def foo?(*args, **kwargs)
-          # TODO: Implement me
         end
       end
     PHLEX
 
     assert_phlex expected, html do
-      assert_instance_methods "foo?"
+      assert_helper_registrations "foo?"
     end
   end
 
@@ -209,28 +205,28 @@ class Phlexing::ConverterTest < Minitest::Spec
 
     expected = <<~PHLEX.strip
       class Component < Phlex::HTML
+        register_value_helper :some_helper
+
         def view_template
           div(class: (some_helper(with: :args)))
-        end
-
-        private
-
-        def some_helper(*args, **kwargs)
-          # TODO: Implement me
         end
       end
     PHLEX
 
     assert_phlex expected, html do
-      assert_instance_methods "some_helper"
+      assert_helper_registrations "some_helper"
     end
   end
 
-  it "should render private instance methods" do
+  it "should register custom helper methods" do
     html = %(<% if should_show? %><%= pretty_print(@user) %><%= another_helper(1) %><% end %>)
 
     expected = <<~PHLEX.strip
       class Component < Phlex::HTML
+        register_output_helper :another_helper
+        register_output_helper :pretty_print
+        register_value_helper :should_show?
+
         def initialize(user:)
           @user = user
         end
@@ -241,26 +237,12 @@ class Phlexing::ConverterTest < Minitest::Spec
             plain another_helper(1)
           end
         end
-
-        private
-
-        def another_helper(*args, **kwargs)
-          # TODO: Implement me
-        end
-
-        def pretty_print(*args, **kwargs)
-          # TODO: Implement me
-        end
-
-        def should_show?(*args, **kwargs)
-          # TODO: Implement me
-        end
       end
     PHLEX
 
     assert_phlex expected, html do
       assert_ivars "user"
-      assert_instance_methods "another_helper", "pretty_print", "should_show?"
+      assert_helper_registrations "another_helper", "pretty_print", "should_show?"
     end
   end
 
