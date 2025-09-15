@@ -52,10 +52,10 @@ module Phlexing
     end
 
     it "should handle ERB" do
-      parser = Parser.call("<div><%= some_method %></div>")
+      parser = Parser.call("<div><%= some_local %></div>")
 
       assert_equal "#document-fragment,div,comment", extract_children(parser).join(",")
-      assert_dom_equal %(<div> <!--PHLEXING:ERB:loud:c29tZV9tZXRob2QK--> </div>), parser.to_xml
+      assert_dom_equal %(<div> <!--PHLEXING:ERB:loud:c29tZV9sb2NhbAo=--> </div>), parser.to_xml
       assert_equal "#document-fragment", parser.name
       assert_equal Nokogiri::HTML5::DocumentFragment, parser.class
     end

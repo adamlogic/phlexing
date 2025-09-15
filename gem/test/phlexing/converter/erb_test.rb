@@ -4,58 +4,58 @@ require_relative "../../test_helper"
 
 class Phlexing::Converter::ErbTest < Minitest::Spec
   it "ERB method call using <% and %>" do
-    html = %(<div><% some_method %></div>)
+    html = %(<div><% some_local %></div>)
 
     expected = <<~PHLEX.strip
-      div { some_method }
+      div { some_local }
     PHLEX
 
     assert_phlex_template expected, html do
-      assert_locals "some_method"
+      assert_locals "some_local"
     end
   end
 
   it "ERB method call using <%= and %>" do
-    html = %(<div><%= some_method %></div>)
+    html = %(<div><%= some_local %></div>)
 
     expected = <<~PHLEX.strip
-      div { some_method }
+      div { some_local }
     PHLEX
 
     assert_phlex_template expected, html do
-      assert_locals "some_method"
+      assert_locals "some_local"
     end
   end
 
   it "ERB method call using <%- and -%>" do
-    html = %(<div><%- some_method -%></div>)
+    html = %(<div><%- some_local -%></div>)
 
     expected = <<~PHLEX.strip
-      div { some_method }
+      div { some_local }
     PHLEX
 
     assert_phlex_template expected, html do
-      assert_locals "some_method"
+      assert_locals "some_local"
     end
   end
 
   it "ERB method call using <%- and %>" do
-    html = %(<div><%- some_method %></div>)
+    html = %(<div><%- some_local %></div>)
 
     expected = <<~PHLEX.strip
-      div { some_method }
+      div { some_local }
     PHLEX
 
     assert_phlex_template expected, html do
-      assert_locals "some_method"
+      assert_locals "some_local"
     end
   end
 
   it "ERB no method call using <%# and %>" do
-    html = %(<div><%# some_method %></div>)
+    html = %(<div><%# some_local %></div>)
 
     expected = <<~PHLEX.strip
-      div do # some_method
+      div do # some_local
       end
     PHLEX
 
@@ -63,10 +63,10 @@ class Phlexing::Converter::ErbTest < Minitest::Spec
   end
 
   it "ERB no method call using <% # and %>" do
-    html = %(<div><% # some_method %></div>)
+    html = %(<div><% # some_local %></div>)
 
     expected = <<~PHLEX.strip
-      div do # some_method
+      div do # some_local
       end
     PHLEX
 
@@ -88,29 +88,29 @@ class Phlexing::Converter::ErbTest < Minitest::Spec
   end
 
   it "ERB interpolation" do
-    html = %(<div><%= "\#{some_method}_text" %></div>)
+    html = %(<div><%= "\#{some_local}_text" %></div>)
 
     expected = <<~PHLEX.strip
-      div { "\#{some_method}_text" }
+      div { "\#{some_local}_text" }
     PHLEX
 
     assert_phlex_template expected, html do
-      assert_locals "some_method"
+      assert_locals "some_local"
     end
   end
 
   it "ERB interpolation and text node" do
-    html = %(<div><%= "\#{some_method}_text" %> More Text</div>)
+    html = %(<div><%= "\#{some_local}_text" %> More Text</div>)
 
     expected = <<~PHLEX.strip
       div do
-        plain "\#{some_method}_text"
+        plain "\#{some_local}_text"
         plain " More Text"
       end
     PHLEX
 
     assert_phlex_template expected, html do
-      assert_locals "some_method"
+      assert_locals "some_local"
     end
   end
 
@@ -180,18 +180,18 @@ class Phlexing::Converter::ErbTest < Minitest::Spec
   end
 
   it "ERB HTML safe output with siblings" do
-    html = %(<div><%== "<p>Some safe HTML</p>" %><%= some_method %><span>Text</span></div>)
+    html = %(<div><%== "<p>Some safe HTML</p>" %><%= some_local %><span>Text</span></div>)
 
     expected = <<~PHLEX.strip
       div do
         unsafe_raw "<p>Some safe HTML</p>"
-        plain some_method
+        plain some_local
         span { "Text" }
       end
     PHLEX
 
     assert_phlex_template expected, html do
-      assert_locals "some_method"
+      assert_locals "some_local"
     end
   end
 

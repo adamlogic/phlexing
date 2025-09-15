@@ -21,6 +21,9 @@ module Phlexing
     end
 
     def call(source)
+      @analyzer = RubyAnalyzer.new(options: options)
+      @analyzer.analyze(source)
+
       options.debug("BEFORE Parser") { source }
 
       document = Parser.call(source, options: options)
@@ -140,7 +143,7 @@ module Phlexing
     def handle_erb_safe_node(node, erb_content = nil)
       erb_content ||= node.text
 
-      if siblings?(node) && string_output?(erb_content)
+      if siblings?(node) && string_output?(erb_content) && !output_helper?(erb_content)
         handle_text_output(erb_content.strip)
       else
         handle_output(erb_content.strip)
@@ -256,6 +259,11 @@ module Phlexing
       in Nokogiri::XML::Comment
         handle_html_comment_node(node)
       end
+    end
+
+    def output_helper?(content)
+      word = content.strip.scan(/^\w+/)[0]
+      @analyzer.output_helpers.include?(word)
     end
   end
 end

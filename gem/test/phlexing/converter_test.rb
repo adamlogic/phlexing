@@ -125,17 +125,17 @@ class Phlexing::ConverterTest < Minitest::Spec
         <%= @company.name %>
       <% end %>
 
-      <%= some_method %>
+      <%= some_local %>
     HTML
 
     expected = <<~PHLEX.strip
       class Component < Phlex::HTML
-        attr_accessor :show_company, :some_method
+        attr_accessor :show_company, :some_local
 
-        def initialize(company:, show_company:, some_method:, user:)
+        def initialize(company:, show_company:, some_local:, user:)
           @company = company
           @show_company = show_company
-          @some_method = some_method
+          @some_local = some_local
           @user = user
         end
 
@@ -147,14 +147,14 @@ class Phlexing::ConverterTest < Minitest::Spec
             plain @company.name
           end
 
-          plain some_method
+          plain some_local
         end
       end
     PHLEX
 
     assert_phlex expected, html do
       assert_ivars "company", "user"
-      assert_locals "show_company", "some_method"
+      assert_locals "show_company", "some_local"
     end
   end
 
@@ -233,8 +233,8 @@ class Phlexing::ConverterTest < Minitest::Spec
 
         def view_template
           if should_show?
-            plain pretty_print(@user)
-            plain another_helper(1)
+            pretty_print(@user)
+            another_helper(1)
           end
         end
       end
