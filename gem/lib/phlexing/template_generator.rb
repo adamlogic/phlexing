@@ -7,6 +7,7 @@ module Phlexing
     using Refinements::StringRefinements
 
     include Helpers
+    include PlainBufferHelpers
 
     attr_accessor :converter, :out, :options
 
@@ -29,6 +30,7 @@ module Phlexing
       document = Parser.call(source, options: options)
       options.debug("AFTER Parser") { [document.inspect, document.errors].reject(&:blank?).join("\n\n") }
       handle_node(document)
+      flush_plain!
 
       options.debug("BEFORE Formatter") { out.string.strip }
 
@@ -153,9 +155,8 @@ module Phlexing
     def handle_text_node(node)
       text = node.text
 
-
       if text.squish.empty? && text.length.positive?
-        out << whitespace unless %w[table thead tbody tfoot tr].include?(node.parent&.name)
+        output(whitespace, blank_line: false) unless %w[table thead tbody tfoot tr].include?(node.parent&.name)
 
         text.strip!
       end
@@ -170,6 +171,8 @@ module Phlexing
     end
 
     def handle_html_element_node(node, level)
+      flush_plain!
+
       out << tag_name(node)
       out << handle_attributes(node)
 
@@ -198,7 +201,7 @@ module Phlexing
       if erb_content.start_with?("#")
         handle_erb_comment_output(erb_content.from(1).strip)
       else
-        out << newline
+        output(newline)
         handle_output(erb_content)
       end
     end
@@ -242,6 +245,8 @@ module Phlexing
       node.children.each do |child|
         handle_node(child, level + 1)
       end
+
+      flush_plain! # ensure trailing sibling text is emitted before leaving the block
     end
 
     def handle_node(node, level = 0)

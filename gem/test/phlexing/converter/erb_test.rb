@@ -99,19 +99,24 @@ class Phlexing::Converter::ErbTest < Minitest::Spec
     end
   end
 
-  it "ERB interpolation and text node" do
+  it "ERB interpolation and text node are combined to a single plain output" do
     html = %(<div><%= "\#{some_local}_text" %> More Text</div>)
 
     expected = <<~PHLEX.strip
-      div do
-        plain "\#{some_local}_text"
-        plain " More Text"
-      end
+      div { plain "\#{some_local}_text More Text" }
     PHLEX
 
     assert_phlex_template expected, html do
       assert_locals "some_local"
     end
+
+    html = %(<div><%= [].join("-") %> \\ More "Text"</div>)
+
+    expected = <<~PHLEX.strip
+      div { plain "\#{[].join("-")} \\ More \\"Text\\"" }
+    PHLEX
+
+    assert_phlex_template expected, html
   end
 
   it "ERB loop" do
@@ -219,8 +224,7 @@ class Phlexing::Converter::ErbTest < Minitest::Spec
     expected = <<~PHLEX.strip
       @greeting =
         capture do
-          plain " Welcome to my shiny new web page! The date and time is "
-          plain Time.now
+          plain " Welcome to my shiny new web page! The date and time is \#{Time.now}"
         end
     PHLEX
 
@@ -252,11 +256,7 @@ class Phlexing::Converter::ErbTest < Minitest::Spec
     html = %(<div>Text<%= "ERB Text" %><%= "#{'interpolate'} text" %></div>)
 
     expected = <<~PHLEX.strip
-      div do
-        plain "Text"
-        plain "ERB Text"
-        plain "#{'interpolate'} text"
-      end
+    div { plain "TextERB Text#{'interpolate'} text" }
     PHLEX
 
     assert_phlex_template expected, html

@@ -94,11 +94,19 @@ module Phlexing
       out << " }"
     end
 
-    def output(name, string)
+    def output(name, string = nil, blank_line: true)
+      if name == "plain"
+        plain_buffer << string
+        return
+      end
+
+      # Any non-plain emission must flush buffered plain first.
+      flush_plain!
+
       out << name
       out << " "
       out << string
-      out << newline
+      out << newline if blank_line
     end
 
     def blocklist
