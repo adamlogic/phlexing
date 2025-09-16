@@ -117,6 +117,39 @@ class Phlexing::ConverterTest < Minitest::Spec
     end
   end
 
+  it "should generate phlex class with ivars and block method calls" do
+    html = <<~HTML.strip
+      <div>
+        <%= @card.title do %>
+          Hey!
+          <%= @card.description %>
+        <% end %>
+      </div>
+    HTML
+
+    expected = <<~PHLEX.strip
+      class Component < Phlex::HTML
+        def initialize(card:)
+          @card = card
+        end
+
+        def view_template
+          div do
+            whitespace
+            @card.title do
+              plain " Hey! \#{@card.description}"
+              whitespace
+            end
+          end
+        end
+      end
+    PHLEX
+
+    assert_phlex expected, html do
+      assert_ivars "card"
+    end
+  end
+
   it "should generate phlex class with ivars, locals and ifs" do
     html = <<~HTML.strip
       <%= @user.name %>

@@ -141,6 +141,9 @@ module Phlexing
     end
 
     def string_output?(content)
+      # Don't treat block method calls as string output.
+      return false if content.strip.end_with?(" do")
+
       word = content.strip.scan(/^\w+/)[0]
 
       return true if word.nil?
