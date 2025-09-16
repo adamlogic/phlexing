@@ -23,6 +23,17 @@ module Phlexing
       HTML
     end
 
+    it "should not strip newlines from script/style/pre tags" do
+      input = <<~HTML.strip
+        <script>
+          var one = 1
+          var two = 2
+        </script>
+      HTML
+
+      assert_equal input, ERBTransformer.call(input)
+    end
+
     it "should transform erb" do
       input = %(<div><% "The Next line has text on it" %> More Text</div>  )
       expected = %(<div><erb silent> &quot;The Next line has text on it&quot; </erb> More Text</div>)
