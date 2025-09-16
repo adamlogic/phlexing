@@ -36,7 +36,13 @@ module Phlexing
     end
 
     def quote(string)
+      # The caller is responsible for escaping parenthesis.
+      # We can't do it here because we might be quoting an interpolated string with Ruby code.
       "%(#{string})"
+    end
+
+    def escape_parens(string)
+      string.gsub('(', '\\(').gsub(')', '\\)')
     end
 
     def parens(string)

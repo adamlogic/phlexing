@@ -119,6 +119,46 @@ class Phlexing::Converter::ErbTest < Minitest::Spec
     assert_phlex_template expected, html
   end
 
+  it "escapes closing parenthesis in plain output" do
+    html = "<div>) <span>)</span></div>"
+
+    expected = <<~PHLEX.strip
+      div do
+        plain %(\\) )
+        span { %(\\)) }
+      end
+    PHLEX
+
+    assert_phlex_template expected, html
+  end
+
+  it "escapes closing parenthesis in attributes" do
+    html = %[<div class="px-2)"></div>]
+    expected = %[div(class: %(px-2\\)))]
+
+    assert_phlex_template expected, html
+  end
+
+  it "does not escape closing parenthesis in ERB interpolated attributes" do
+    html = %q[<div class="<%= some_helper() %> px-2)">]
+    expected = %q[div(class: %(#{some_helper()} px-2\\)))]
+
+    assert_phlex_template expected, html do
+      assert_helper_registrations "some_helper"
+    end
+  end
+
+  it "escapes closing parenthesis in HTML comments" do
+    html = %[<br /><!-- look out ) -->]
+    expected = <<~PHLEX.strip
+      br
+
+      comment { %(look out \\)) }
+    PHLEX
+
+    assert_phlex_template expected, html
+  end
+
   it "ERB loop" do
     html = <<~HTML.strip
       <% @articles.each do |article| %>

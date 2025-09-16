@@ -56,7 +56,7 @@ module Phlexing
     end
 
     def handle_html_comment_output(text)
-      output("comment", braces(quote(text)))
+      output("comment", braces(quote(escape_parens(text))))
     end
 
     def handle_erb_comment_output(text)
@@ -101,7 +101,7 @@ module Phlexing
           # eg. <input required> => input(required: true)
           s << "true"
         else
-          s << quote(attribute.value)
+          s << quote(escape_parens(attribute.value))
         end
       }
     end
@@ -120,7 +120,7 @@ module Phlexing
           transformed.children.each do |node|
             case node
             when Nokogiri::XML::Text
-              attribute << node.text
+              attribute << escape_parens(node.text)
             when Nokogiri::XML::Comment
               kind, code = Parser.decode_erb_comment(node.text)
               code.strip!
@@ -163,10 +163,12 @@ module Phlexing
 
       return if text.length.zero?
 
+      text = quote(escape_parens(text))
+
       if siblings?(node)
-        handle_text_output(quote(node.text))
+        handle_text_output(text)
       else
-        handle_output(quote(text))
+        handle_output(text)
       end
     end
 
